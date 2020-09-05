@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Job_Post
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -29,49 +29,9 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-    return jsonify(response_body), 200
-
-
-# This is the LOG-IN endpoint - POST
-@app.route('/login', methods=['POST'])
-def login():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-    params = request.get_json()
-    email = params.get('email', None)
-    password = params.get('password', None)
-    type_of_user = params.get('type_of_user', None)
-    if not email:
-        return jsonify({"msg": "Missing email in request"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password in request"}), 400
-
-    # check for "type_of_user" in database
-    type_of_user = 'job-poster'
-    usercheck = User.query.filter_by(email=email, password=password).first()
-    if usercheck is None:
-        type_of_user = 'job-seeker'
-        usercheck = Job-Seeker.query.filter_by(email=email, password=password).first()
-
-    # if user not found
-    if usercheck == None:
-        return jsonify({"msg": "Invalid credentials provided"}), 401
-    #if user found, Identity can be any data that is json serializable
-    ret = {
-        'jwt': create_jwt(identity=email),
-        'user': usercheck.serialize(),
-        'type_of_user': type_of_user
-    }
-    return jsonify(ret), 200
-
 #This is the CREATE ACCOUNT endpoint - POST, GET
-@app.route('/create-account', methods=['POST', 'GET'])
-def get_user():
+@app.route('/create-account', methods=['POST'])
+def create_user():
 
     if request.method == 'POST':
         body = request.get_json()
@@ -99,7 +59,9 @@ def get_user():
 
         return "ok", 200
 
-# This is the GET SINGLE USER endpoint - GET
+#This is the GET USER endpoint - GET
+@app.route('/user', methods=['GET'])
+def get_user():
     if request.method == 'GET':
         all_user = User.query.all()
         all_user = list(map(lambda x: x.serialize(), all_user))
@@ -107,11 +69,50 @@ def get_user():
 
     return "Invalid Method", 404
 
-@app.route('/user/<int:user_id>', methods=['PUT', 'GET', 'DELETE'])
-def get_single_contact(user_id):
-    """
-    Single contact
-    """
+#This is the GET SINGLE USER endpoint - GET
+@app.route('/user/<int:user_id>', methods=['GET'])
+def get_single_user(user_id):
+    if request.method == 'GET':
+        user1 = User.query.get(user_id)
+        if user1 is None:
+            raise APIException('User not found', status_code=404)
+        return jsonify(user1.serialize()), 200
+
+
+# This is the LOG-IN endpoint - POST
+@app.route('/login', methods=['POST', 'PUT'])
+def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+    params = request.get_json()
+    email = params.get('email', None)
+    password = params.get('password', None)
+    type_of_user = params.get('type_of_user', None)
+    if not email:
+        return jsonify({"msg": "Missing email in request"}), 400
+    if not password:
+        return jsonify({"msg": "Missing password in request"}), 400
+
+    # check for "type_of_user" in database
+    type_of_user = 'job-poster'
+    usercheck = User.query.filter_by(email=email, password=password).first()
+    if usercheck is None:
+        type_of_user = 'job-seeker'
+        usercheck = Job-Seeker.query.filter_by(email=email, password=password).first()
+
+    # if user not found
+    if usercheck == None:
+        return jsonify({"msg": "Invalid credentials provided"}), 401
+
+    #if user found, Identity can be any data that is json serializable
+    ret = {
+        'jwt': create_jwt(identity=email),
+        'user': usercheck.serialize(),
+        'type_of_user': type_of_user
+    }
+    return jsonify(ret), 200
+
+
 
 # PUT request
     if request.method == 'PUT':
@@ -141,14 +142,6 @@ def get_single_contact(user_id):
 
         return jsonify(user1.serialize()), 200
 
-
-# GET request
-    if request.method == 'GET':
-        user1 = User.query.get(user_id)
-        if user1 is None:
-            raise APIException('User not found', status_code=404)
-        return jsonify(user1.serialize()), 200
-
 # DELETE request
     if request.method == 'DELETE':
         user1 = User.query.get(user_id)
@@ -162,12 +155,11 @@ def get_single_contact(user_id):
 
 
 
-# Tables for JOB POST
-
-@app.route('/job-post', methods=['POST', 'GET'])
+########## Tables for JOB POST
+@app.route('/job-post', methods=['POST', 'GET', 'PUT'])
 def get_job_post():
 
-#Create a JOB POST and retrieve all JOB POSTS
+########## Create a JOB POST and retrieve all JOB POSTS ##########
     if request.method == 'POST':
         body = request.get_json()
         if body is None:
@@ -181,7 +173,7 @@ def get_job_post():
         if 'job_zipcode' not in body:
             raise APIException('You need to specify the zipcode', status_code=400)
 
-        job1 = Job(job_title=body['job_title'], job_description = body['job_description'], job_address = body['job_address'], zipcode = body['zipcode'])
+        job1 = Job_Post(job_title=body['job_title'], job_description = body['job_description'], job_address = body['job_address'], zipcode = body['zipcode'])
         db.session.add(job1)
         db.session.commit()
 
@@ -189,13 +181,27 @@ def get_job_post():
 
 # GET request
     if request.method == 'GET':
-        all_job = Job.query.all()
+        all_job = Job_Post.query.all()
         all_job = list(map(lambda x: x.serialize(), all_job))
         return jsonify(all_job), 200
 
     return "Invalid Method", 404
 
-# PUT request
+ 
+
+########## This is the SINGLE JOB POST endpoint - GET, PUT, DELETE ##########
+@app.route('/job_post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_job_post(job_id):
+    """
+    Single job post
+    """
+    if request.method == 'GET':
+        job1 = Job.query.get(job_id)
+        if job1 is None:
+            raise APIException('Job not found', status_code=404)
+        return jsonify(job1.serialize()), 200
+
+########## PUT request
     if request.method == 'PUT':
         body = request.get_json()
         if body is None:
@@ -215,22 +221,9 @@ def get_job_post():
             job1.job_zipcode = body["job_zipcode"]
         db.session.commit()
 
-        return jsonify(job1.serialize()), 200   
+        return jsonify(job1.serialize()), 200  
 
-# GET request
-    if request.method == 'GET':
-        job1 = Job.query.get(job_id)
-        if job1 is None:
-            raise APIException('Job not found', status_code=404)
-        return jsonify(job1.serialize()), 200
-
-@app.route('/job-post/<int:job-post_id>', methods=['PUT', 'GET', 'DELETE'])
-def get_single_job_post(job_id):
-    """
-    Single job post
-    """
-
-# DELETE request
+########## DELETE request
     if request.method == 'DELETE':
         job1 = Job.query.get(job_id)
         if job1 is None:

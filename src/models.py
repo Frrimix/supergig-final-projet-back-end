@@ -45,7 +45,7 @@ class Job_Post(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id
+            "id": self.id,
             "job_title": self.job_title,
             "job_description": self.job_description,
             "job_address": self.job_address,
