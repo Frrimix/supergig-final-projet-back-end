@@ -29,12 +29,13 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-#This is the CREATE ACCOUNT endpoint - POST, GET
+#This is the CREATE ACCOUNT endpoint - POST
 @app.route('/create-account', methods=['POST'])
 def create_user():
 
     if request.method == 'POST':
         body = request.get_json()
+        print(body)
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
         if "first_name" not in body:
@@ -45,7 +46,7 @@ def create_user():
             raise APIException('You need to specify the email', status_code=400)
         if 'password' not in body:
             raise APIException('You need to specify the password', status_code=400)
-        if 'addresss' not in body:
+        if 'address' not in body:
             raise APIException('You need to specify the address', status_code=400)
         if 'zipcode' not in body:
             raise APIException('You need to specify the zipcode', status_code=400)
