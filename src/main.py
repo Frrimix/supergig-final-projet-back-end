@@ -29,7 +29,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-#This is the CREATE ACCOUNT endpoint - POST
+########## CREATE-ACCOUNT ENDPOINT - POST
 @app.route('/create-account', methods=['POST'])
 def create_user():
 
@@ -60,7 +60,7 @@ def create_user():
 
         return "ok", 200
 
-#This is the GET USER endpoint - GET
+########## GET ALL USERS ENDPOINT - GET
 @app.route('/user', methods=['GET'])
 def get_user():
     if request.method == 'GET':
@@ -70,7 +70,7 @@ def get_user():
 
     return "Invalid Method", 404
 
-#This is the GET SINGLE USER endpoint - GET
+########## GET SINGLE USER ENDPOINT - GET
 @app.route('/user/<int:user_id>', methods=['GET'])
 def get_single_user(user_id):
     if request.method == 'GET':
@@ -79,8 +79,19 @@ def get_single_user(user_id):
             raise APIException('User not found', status_code=404)
         return jsonify(user1.serialize()), 200
 
+# DELETE request
+    if request.method == 'DELETE':
+        user1 = User.query.get(user_id)
+        if user1 is None:
+            raise APIException('User not found', status_code=404)
+        db.session.delete(user1)
+        db.session.commit()
+        return "ok", 200
 
-# This is the LOG-IN endpoint - POST
+    return "Invalid Method", 404
+
+
+########## LOG-IN ENDPOINT
 @app.route('/login', methods=['POST', 'PUT'])
 def login():
     if not request.is_json:
@@ -113,8 +124,6 @@ def login():
     }
     return jsonify(ret), 200
 
-
-
 # PUT request
     if request.method == 'PUT':
         body = request.get_json()
@@ -143,24 +152,12 @@ def login():
 
         return jsonify(user1.serialize()), 200
 
-# DELETE request
-    if request.method == 'DELETE':
-        user1 = User.query.get(user_id)
-        if user1 is None:
-            raise APIException('User not found', status_code=404)
-        db.session.delete(user1)
-        db.session.commit()
-        return "ok", 200
 
-    return "Invalid Method", 404
-
-
-
-########## Tables for JOB POST
-@app.route('/job-post', methods=['POST', 'GET', 'PUT'])
+########## JOB-POST ENDPOINTS
+@app.route('/job-post', methods=['POST', 'GET'])
 def get_job_post():
 
-########## Create a JOB POST and retrieve all JOB POSTS ##########
+########## Create a job-post
     if request.method == 'POST':
         body = request.get_json()
         if body is None:
@@ -180,7 +177,7 @@ def get_job_post():
 
         return "ok", 200
 
-# GET request
+########## View all job-posts
     if request.method == 'GET':
         all_job = Job_Post.query.all()
         all_job = list(map(lambda x: x.serialize(), all_job))
@@ -190,19 +187,20 @@ def get_job_post():
 
  
 
-########## This is the SINGLE JOB POST endpoint - GET, PUT, DELETE ##########
+########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
 @app.route('/job_post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
 def get_single_job_post(job_id):
     """
     Single job post
     """
+########## View single job-post
     if request.method == 'GET':
         job1 = Job.query.get(job_id)
         if job1 is None:
             raise APIException('Job not found', status_code=404)
         return jsonify(job1.serialize()), 200
 
-########## PUT request
+########## Update single job-post
     if request.method == 'PUT':
         body = request.get_json()
         if body is None:
@@ -224,7 +222,7 @@ def get_single_job_post(job_id):
 
         return jsonify(job1.serialize()), 200  
 
-########## DELETE request
+########## Delete single job-post
     if request.method == 'DELETE':
         job1 = Job.query.get(job_id)
         if job1 is None:
