@@ -174,7 +174,7 @@ def get_job_post():
         if 'job_zipcode' not in body:
             raise APIException('You need to specify the zipcode', status_code=400)
 
-        job1 = Job_Post(job_title=body['job_title'], job_description = body['job_description'], job_address = body['job_address'], zipcode = body['zipcode'])
+        job1 = Job_Post(job_title=body['job_title'], job_description = body['job_description'], job_address = body['job_address'], job_zipcode = body['job_zipcode'])
         db.session.add(job1)
         db.session.commit()
 
