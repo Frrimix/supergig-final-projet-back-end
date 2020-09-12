@@ -55,7 +55,7 @@ def create_user():
         if 'type_of_user' not in body:
             raise APIException('You need to specify the type of user', status_code=400)
         
-        user1 = User(first_name=body['first_name'], last_name=body['last_name'], password = body['password'], email = body['email'], address=body['address'], zipcode = body['zipcode'], sexe = body['sex'], type_of_user= body['type_of_user'])
+        user1 = User(first_name=body['first_name'], last_name=body['last_name'], password = body['password'], email = body['email'], address=body['address'], zipcode = body['zipcode'], sex = body['sex'], type_of_user= body['type_of_user'])
             
         db.session.add(user1)
         db.session.commit()
