@@ -13,6 +13,7 @@ class User(db.Model):
     password = db.Column(db.String(120), unique=False, nullable=False)
     address = db.Column(db.String(120), unique=False, nullable=False)
     zipcode = db.Column(db.String(10), unique=False, nullable=False)
+    sex = db.Column(db.String(10), unique=False, nullable=False)
     type_of_user = db.Column(db.String(120), unique=False, nullable=True)
 
     def __repr__(self):
@@ -27,6 +28,7 @@ class User(db.Model):
             "password": self.password,
             "address": self.address,
             "zipcode": self.zipcode,
+            "sex": self.sex,
             "type_of_user": self.type_of_user
         }
 

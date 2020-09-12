@@ -50,10 +50,12 @@ def create_user():
             raise APIException('You need to specify the address', status_code=400)
         if 'zipcode' not in body:
             raise APIException('You need to specify the zipcode', status_code=400)
+        if 'sex' not in body:
+            raise APIException('You need to specify the sex of the user', status_code=400)
         if 'type_of_user' not in body:
             raise APIException('You need to specify the type of user', status_code=400)
         
-        user1 = User(first_name=body['first_name'], last_name=body['last_name'], password = body['password'], email = body['email'], address=body['address'], zipcode = body['zipcode'], type_of_user= body['type_of_user'])
+        user1 = User(first_name=body['first_name'], last_name=body['last_name'], password = body['password'], email = body['email'], address=body['address'], zipcode = body['zipcode'], sexe = body['sex'], type_of_user= body['type_of_user'])
             
         db.session.add(user1)
         db.session.commit()
@@ -70,13 +72,43 @@ def get_user():
 
     return "Invalid Method", 404
 
-########## GET SINGLE USER ENDPOINT - GET
-@app.route('/user/<int:user_id>', methods=['GET'])
+########## GET SINGLE USER ENDPOINT - GET, put, DELETE
+@app.route('/user/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
 def get_single_user(user_id):
     if request.method == 'GET':
         user1 = User.query.get(user_id)
         if user1 is None:
             raise APIException('User not found', status_code=404)
+        return jsonify(user1.serialize()), 200
+
+# PUT request
+    if request.method == 'PUT':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+
+        user1 = User.query.get(user_id)
+        if user1 is None:
+            raise APIException('User not found', status_code=404)
+
+        if "first_name" in body:
+            user1.name = body["first_name"]
+        if "last_name" in body:
+            user1.name = body["last_name"]
+        if "email" in body:
+            user1.email = body["email"]
+        if "password" in body:
+            user1.password = body["password"]
+        if "address" in body:
+            user1.zipcode = body["address"]
+        if "sex" in body:
+            user1.sex = body["sex"]
+        if "zipcode" in body:
+            user1.zipcode = body["zipcode"]
+        if "type_of_user" in body:
+            user1.zipcode = body["type_of_user"]
+        db.session.commit()
+
         return jsonify(user1.serialize()), 200
 
 # DELETE request
@@ -144,6 +176,8 @@ def login():
             user1.password = body["password"]
         if "address" in body:
             user1.zipcode = body["address"]
+        if "sex" in body:
+            user1.sex = body["sex"]
         if "zipcode" in body:
             user1.zipcode = body["zipcode"]
         if "type_of_user" in body:
