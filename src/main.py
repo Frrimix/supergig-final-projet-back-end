@@ -29,7 +29,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-########## CREATE-ACCOUNT ENDPOINT - POST
+########## CREATE-ACCOUNT ENDPOINT - POST - used to create a user account
 @app.route('/create-account', methods=['POST'])
 def create_user():
 
@@ -62,7 +62,7 @@ def create_user():
 
         return "ok", 200
 
-########## GET ALL USERS ENDPOINT - GET
+########## GET ALL USERS ENDPOINT - GET - shows all users who have an account
 @app.route('/user', methods=['GET'])
 def get_user():
     if request.method == 'GET':
@@ -72,7 +72,7 @@ def get_user():
 
     return "Invalid Method", 404
 
-########## GET SINGLE USER ENDPOINT - GET, put, DELETE
+########## GET SINGLE USER ENDPOINT - GET, PUT, DELETE
 @app.route('/user/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
 def get_single_user(user_id):
     if request.method == 'GET':
@@ -81,7 +81,7 @@ def get_single_user(user_id):
             raise APIException('User not found', status_code=404)
         return jsonify(user1.serialize()), 200
 
-# PUT request
+# PUT request - updates the user's account info
     if request.method == 'PUT':
         body = request.get_json()
         if body is None:
@@ -111,7 +111,7 @@ def get_single_user(user_id):
 
         return jsonify(user1.serialize()), 200
 
-# DELETE request
+# DELETE request - delete's the user's account
     if request.method == 'DELETE':
         user1 = User.query.get(user_id)
         if user1 is None:
@@ -123,7 +123,7 @@ def get_single_user(user_id):
     return "Invalid Method", 404
 
 
-########## LOG-IN ENDPOINT
+########## LOG-IN ENDPOINT - used for logging in
 @app.route('/login', methods=['POST', 'PUT'])
 def login():
     if not request.is_json:
