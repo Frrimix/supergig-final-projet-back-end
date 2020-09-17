@@ -9,6 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Job_Post
+from sqlalchemy import Column, ForeignKey, Integer, String
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -131,7 +132,7 @@ def login():
     params = request.get_json()
     email = params.get('email', None)
     password = params.get('password', None)
-    type_of_user = params.get('type_of_user', None)
+    # type_of_user = params.get('type_of_user', None)
     if not email:
         return jsonify({"msg": "Missing email in request"}), 400
     if not password:
@@ -141,7 +142,7 @@ def login():
     type_of_user = 'job-poster'
     usercheck = User.query.filter_by(email=email, password=password).first()
     if usercheck is None:
-        type_of_user = 'job-seeker'
+        # type_of_user = 'job-seeker'
         usercheck = Job-Seeker.query.filter_by(email=email, password=password).first()
 
     # if user not found
@@ -150,9 +151,8 @@ def login():
 
     #if user found, Identity can be any data that is json serializable
     ret = {
-        'jwt': create_jwt(identity=email),
-        'user': usercheck.serialize(),
-        'type_of_user': type_of_user
+        # 'jwt': create_jwt(identity=email), <---- Will not work if un-commented
+        'user': usercheck.serialize()
     }
     return jsonify(ret), 200
 
