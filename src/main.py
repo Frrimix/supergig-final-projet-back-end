@@ -220,10 +220,16 @@ def get_job_post():
             raise APIException('You need to specify the job description', status_code=400)
         if 'job_address' not in body:
             raise APIException('You need to specify the job address', status_code=400)
+        if 'job_state' not in body:
+            raise APIException('You need to specify the job state', status_code=400)
+        if 'job_city' not in body:
+            raise APIException('You need to specify the job city', status_code=400)
         if 'job_zipcode' not in body:
             raise APIException('You need to specify the zipcode', status_code=400)
+        if 'job_payment' not in body:
+            raise APIException('You need to specify the payment', status_code=400)
 
-        job1 = Job_Post(job_title=body['job_title'], job_description = body['job_description'], job_address = body['job_address'], job_zipcode = body['job_zipcode'])
+        job1 = Job_Post(job_title=body['job_title'], job_description = body['job_description'], job_address = body['job_address'], job_state = body['job_state'], job_city = body['job_city'], job_zipcode = body['job_zipcode'], job_payment = body['job_payment'],)
         db.session.add(job1)
         db.session.commit()
 
@@ -269,11 +275,17 @@ def get_single_job_post(job_id):
             job1.job_description = body["job_description"]
         if "job_address" in body:
             job1.address = body["job_address"]
+        if "job_state" in body:
+            job1.address = body["job_state"]
+        if "job_city" in body:
+            job1.address = body["job_city"]
         if "job_zipcode" in body:
             job1.job_zipcode = body["job_zipcode"]
+        if "job_payment" in body:
+            job1.job_zipcode = body["job_payment"]
         db.session.commit()
 
-        return jsonify(job1.serialize()), 200  
+        return jsonify(job1.serialize()), 200   
 
 ########## Delete single job-post
     if request.method == 'DELETE':

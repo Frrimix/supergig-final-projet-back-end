@@ -38,7 +38,10 @@ class Job_Post(db.Model):
     job_title = db.Column(db.String(1000), unique=False, nullable=False)
     job_description = db.Column(db.String(2000), unique=False, nullable=False)
     job_address = db.Column(db.String(120), unique=False, nullable=False)
+    job_state = db.Column(db.String(120), unique=False, nullable=False)
+    job_city = db.Column(db.String(120), unique=False, nullable=False)
     job_zipcode = db.Column(db.String(10), unique=False, nullable=False)
+    job_payment = db.Column(db.String(10), unique=False, nullable=False)
     user = relationship(User)
     user_id = Column(Integer, ForeignKey('user.id'))
 
@@ -51,5 +54,8 @@ class Job_Post(db.Model):
             "job_title": self.job_title,
             "job_description": self.job_description,
             "job_address": self.job_address,
+            "job_state": self.job_state,
+            "job_city": self.job_city,
             "job_zipcode": self.job_zipcode,
+            "job_payment": self.job_payment,
         }
