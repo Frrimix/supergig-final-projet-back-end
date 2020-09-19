@@ -75,6 +75,7 @@ def create_user():
 
 ########## GET ALL USERS ENDPOINT - GET - shows all users who have an account
 @app.route('/user', methods=['GET'])
+@jwt_required
 def get_user():
     if request.method == 'GET':
         all_user = User.query.all()
@@ -85,6 +86,7 @@ def get_user():
 
 ########## GET SINGLE USER ENDPOINT - GET, PUT, DELETE
 @app.route('/user/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required
 def get_single_user(user_id):
     if request.method == 'GET':
         user1 = User.query.get(user_id)
@@ -205,8 +207,8 @@ def login():
 
 
 ########## JOB-POST ENDPOINTS
-@jwt_required
 @app.route('/job-post', methods=['POST', 'GET'])
+@jwt_required
 def get_job_post():
 
 ########## Create a job-post
@@ -246,8 +248,8 @@ def get_job_post():
  
 
 ########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
-@jwt_required
 @app.route('/job_post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
+@jwt_required
 def get_single_job_post(job_id):
     """
     Single job post
