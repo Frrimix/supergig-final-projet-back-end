@@ -5,17 +5,17 @@ import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Job_Post
 from sqlalchemy import Column, ForeignKey, Integer, String
 from flask_jwt_simple import (
-    JWTManager, jwt_required, create_jwt, get_jwt_identity
+    JWTManager, create_jwt, get_jwt_identity
+)
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
 )
 
 app = Flask(__name__)
@@ -134,8 +134,14 @@ def get_single_user(user_id):
     return "Invalid Method", 404
 
 
+@app.route('/protected', methods=['GET'])
+@jwt_required
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
 ########## LOG-IN ENDPOINT - used for logging in
-@JWT_required
 @app.route('/login', methods=['POST', 'PUT'])
 def login():
     if not request.is_json:
@@ -199,7 +205,7 @@ def login():
 
 
 ########## JOB-POST ENDPOINTS
-@JWT_required
+@jwt_required
 @app.route('/job-post', methods=['POST', 'GET'])
 def get_job_post():
 
@@ -234,7 +240,7 @@ def get_job_post():
  
 
 ########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
-@JWT_required
+@jwt_required
 @app.route('/job_post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
 def get_single_job_post(job_id):
     """
