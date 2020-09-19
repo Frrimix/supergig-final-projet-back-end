@@ -10,15 +10,21 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Job_Post
 from sqlalchemy import Column, ForeignKey, Integer, String
+from flask_jwt_simple import (
+    JWTManager, jwt_required, create_jwt, get_jwt_identity
+)
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
+app.config['JWT_SECRET_KEY'] = 'b85536e15f59b519eaf4dac6c3cde80bc87d39438f52a1b5e7933d6fffea8836'  # Change this!
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
