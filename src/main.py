@@ -57,6 +57,8 @@ def create_user():
             raise APIException('You need to specify the email', status_code=400)
         if 'password' not in body:
             raise APIException('You need to specify the password', status_code=400)
+        if 'phone' not in body:
+            raise APIException('You need to specify the phone', status_code=400)
         if 'address' not in body:
             raise APIException('You need to specify the address', status_code=400)
         if 'zipcode' not in body:
@@ -66,7 +68,7 @@ def create_user():
         if 'type_of_user' not in body:
             raise APIException('You need to specify the type of user', status_code=400)
         
-        user1 = User(first_name=body['first_name'], last_name=body['last_name'], password = body['password'], email = body['email'], address=body['address'], zipcode = body['zipcode'], sex = body['sex'], type_of_user= body['type_of_user'])
+        user1 = User(first_name=body['first_name'], last_name=body['last_name'], password = body['password'], email = body['email'], phone = body['phone'], address=body['address'], zipcode = body['zipcode'], sex = body['sex'], type_of_user= body['type_of_user'])
             
         db.session.add(user1)
         db.session.commit()
@@ -75,7 +77,7 @@ def create_user():
 
 ########## GET ALL USERS ENDPOINT - GET - shows all users who have an account
 @app.route('/user', methods=['GET'])
-@jwt_required
+# @jwt_required
 def get_user():
     if request.method == 'GET':
         all_user = User.query.all()
@@ -86,7 +88,7 @@ def get_user():
 
 ########## GET SINGLE USER ENDPOINT - GET, PUT, DELETE
 @app.route('/user/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
-@jwt_required
+# @jwt_required
 def get_single_user(user_id):
     if request.method == 'GET':
         user1 = User.query.get(user_id)
@@ -112,6 +114,8 @@ def get_single_user(user_id):
             user1.email = body["email"]
         if "password" in body:
             user1.password = body["password"]
+        if "phone" in body:
+            user1.password = body["phone"]
         if "address" in body:
             user1.zipcode = body["address"]
         if "sex" in body:
@@ -208,7 +212,7 @@ def login():
 
 ########## JOB-POST ENDPOINTS
 @app.route('/job-post', methods=['POST', 'GET'])
-@jwt_required
+# @jwt_required
 def get_job_post():
 
 ########## Create a job-post
@@ -249,7 +253,7 @@ def get_job_post():
 
 ########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
 @app.route('/job_post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
-@jwt_required
+# @jwt_required
 def get_single_job_post(job_id):
     """
     Single job post

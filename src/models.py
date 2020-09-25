@@ -11,6 +11,7 @@ class User(db.Model):
     last_name = db.Column(db.String(80), unique=False, nullable=False, default='')
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), unique=False, nullable=False)
+    phone = db.Column(db.String(120), unique=True, nullable=False)
     address = db.Column(db.String(120), unique=False, nullable=False)
     zipcode = db.Column(db.String(10), unique=False, nullable=False)
     sex = db.Column(db.String(10), unique=False, nullable=False)
@@ -26,6 +27,7 @@ class User(db.Model):
             "last_name": self.last_name,
             "email": self.email,
             "password": self.password,
+            "phone": self.phone,
             "address": self.address,
             "zipcode": self.zipcode,
             "sex": self.sex,
