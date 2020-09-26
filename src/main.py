@@ -11,11 +11,7 @@ from admin import setup_admin
 from models import db, User, Job_Post
 from sqlalchemy import Column, ForeignKey, Integer, String
 from flask_jwt_simple import (
-    JWTManager, create_jwt, get_jwt_identity
-)
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
+    JWTManager, jwt_required, create_jwt, get_jwt_identity
 )
 
 app = Flask(__name__)
@@ -77,7 +73,7 @@ def create_user():
 
 ########## GET ALL USERS ENDPOINT - GET - shows all users who have an account
 @app.route('/user', methods=['GET'])
-# @jwt_required
+@jwt_required
 def get_user():
     if request.method == 'GET':
         all_user = User.query.all()
@@ -88,7 +84,7 @@ def get_user():
 
 ########## GET SINGLE USER ENDPOINT - GET, PUT, DELETE
 @app.route('/user/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
-# @jwt_required
+@jwt_required
 def get_single_user(user_id):
     if request.method == 'GET':
         user1 = User.query.get(user_id)
@@ -175,7 +171,8 @@ def login():
     #if user found, Identity can be any data that is json serializable
     ret = {
         # 'jwt': create_jwt(identity=email), <---- Will not work if un-commented
-        'user': usercheck.serialize()
+        'user': usercheck.serialize(),
+        'jwt': create_jwt(identity=email)
     }
     return jsonify(ret), 200
 
