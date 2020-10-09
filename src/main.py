@@ -249,7 +249,7 @@ def get_job_post():
 
 
 ########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
-@app.route('/job-post/<int:job-post_id>', methods=['PUT', 'GET', 'DELETE'])
+@app.route('/job-post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
 # @jwt_required
 def get_single_job_post(job_id):
     """
