@@ -246,10 +246,10 @@ def get_job_post():
 
     return "Invalid Method", 404
 
- 
+
 
 ########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
-@app.route('/job_post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
+@app.route('/job-post/<int:job-post_id>', methods=['PUT', 'GET', 'DELETE'])
 # @jwt_required
 def get_single_job_post(job_id):
     """
