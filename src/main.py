@@ -251,13 +251,13 @@ def get_job_post():
 ########## SINGLE JOB POST ENDPOINT - GET, PUT, DELETE
 @app.route('/job-post/<int:job_post_id>', methods=['PUT', 'GET', 'DELETE'])
 # @jwt_required
-def get_single_job_post(job_id):
+def get_single_job_post(job_post_id):
     """
     Single job post
     """
 ########## View single job-post
     if request.method == 'GET':
-        job1 = Job.query.get(job_id)
+        job1 = Job.query.get(job_post_id)
         if job1 is None:
             raise APIException('Job not found', status_code=404)
         return jsonify(job1.serialize()), 200
@@ -268,7 +268,7 @@ def get_single_job_post(job_id):
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
 
-        job1 = Job.query.get(job_id)
+        job1 = Job.query.get(job_post_id)
         if job1 is None:
             raise APIException('Job not found', status_code=404)
 
@@ -292,7 +292,7 @@ def get_single_job_post(job_id):
 
 ########## Delete single job-post
     if request.method == 'DELETE':
-        job1 = Job.query.get(job_id)
+        job1 = Job.query.get(job_post_id)
         if job1 is None:
             raise APIException('Job not found', status_code=404)
         db.session.delete(job1)
